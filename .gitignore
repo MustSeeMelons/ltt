@@ -1,0 +1,4 @@
+*audit.json
+images
+node_modules
+*.log
