@@ -2,44 +2,25 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 const PNG = require("pngjs").PNG;
 const pixelmatch = require("pixelmatch");
-const winston = require("winston");
 const os = require("os");
 const nodemailer = require("nodemailer");
-require("winston-daily-rotate-file");
+const conf = require("./config").credentials;
 
 const mail = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "mail@gmail.com",
-    pass: "pass",
+    user: conf.senderEmail,
+    pass: conf.senderPassword,
   },
 });
 
-const transport = new winston.transports.DailyRotateFile({
-  filename: "application-%DATE%.log",
-  datePattern: "YYYY-MM-DD",
-  maxSize: "20m",
-  maxFiles: "2d",
-});
-
-const logger = winston.createLogger({
-  format: winston.format.json(),
-  transports: [transport],
-});
-
-const URLS = [
-  "https://www.lttstore.com/",
-  "https://www.lttstore.com/collections/all",
-  "https://www.lttstore.com/collections/all?page=2",
-];
+const URLS = ["https://www.zeltazivtina.lv/zz-bonusu-klubs/"];
 
 const urlToFileMap = {
   [URLS[0]]: "home",
-  [URLS[1]]: "all-p1",
-  [URLS[2]]: "all-p2",
 };
 
-const tDuration = 1000 * 60 * 10;
+const tDuration = 1000 * 60;
 let counter = 0;
 
 async function autoScroll(page) {
@@ -90,6 +71,8 @@ const compare = (url) => {
           img1.height,
           { threshold: 0.1 }
         );
+
+        fs.writeFileSync(`./images/diff-${counter}.png`, PNG.sync.write(diff));
 
         resolve(numDiffPixels);
       }
@@ -143,18 +126,15 @@ const getScreenshotAndCompare = async () => {
       const comparison = await compare(url);
 
       if (comparison > 0) {
-        logger.info(url);
         await mail.sendMail({
-          to: "my_email@gmail.com",
-          subject: "LTT Store",
+          priority: "high",
+          to: conf.recieverEmail,
+          subject: conf.subject,
+          text: `Go to: ${URLS[0]} if you see something!`,
           attachments: [
             {
-              filename: "Previous.png",
-              path: `./images/${urlToFileMap[url]}-${counter - 1}.png`,
-            },
-            {
-              filename: "Current.png",
-              path: `./images/${urlToFileMap[url]}-${counter}.png`,
+              filename: "diff.png",
+              path: `./images/diff-${counter}.png`,
             },
           ],
         });

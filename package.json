@@ -1,14 +1,12 @@
 {
-  "name": "ltt",
+  "name": "page-compare",
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
     "puppeteer": "5.5.0",
     "pixelmatch": "5.2.1",
     "pngjs": "6.0.0",
-    "winston": "3.3.3",
-    "winston-daily-rotate-file": "4.5.0",
-    "nodemailer": "6.4.16"
+    "nodemailer": "6.4.17"
   },
   "scripts": {
     "start": "node index.js"
