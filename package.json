@@ -6,7 +6,14 @@
     "puppeteer": "5.5.0",
     "pixelmatch": "5.2.1",
     "pngjs": "6.0.0",
-    "nodemailer": "6.4.17"
+    "nodemailer": "6.4.17",
+    "sharp": "0.27.1",
+    "join-images": "0.2.5",
+    "tslib": "2.1.0",
+    "node-notifier": "9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "12.12.2"
   },
   "scripts": {
     "start": "node index.js"
